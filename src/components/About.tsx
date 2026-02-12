@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 
 const Globe = dynamic(() => import("./Globe"), { ssr: false });
+const TechStack3D = dynamic(() => import("./TechStack3D"), { ssr: false });
 
 const stats = [
   { value: "13+", label: "Years of Experience" },
@@ -119,6 +120,27 @@ export default function About() {
             <p className="mt-6 text-sm text-white/40">
               Work with us <span className="ml-1">→</span>
             </p>
+          </div>
+        </div>
+
+        {/* Tech Stack 3D row */}
+        <div className="mt-5 grid grid-cols-12 gap-5 md:grid-cols-6 sm:grid-cols-1 sm:gap-4">
+          <div className="col-span-12 md:col-span-6 overflow-hidden rounded-2xl border border-dark-border bg-dark-card">
+            <div className="relative h-[620px] lg:h-[520px] md:h-[420px] sm:h-[360px]">
+              {/* Label overlay */}
+              <div className="absolute left-6 top-6 z-10 lg:left-5 lg:top-5">
+                <p className="font-display text-xl font-semibold text-white lg:text-lg md:text-base">
+                  Tech Stack
+                </p>
+                <p className="mt-2 flex items-center gap-2 text-xs tracking-wider text-white/40">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                  DRAG TO EXPLORE
+                </p>
+              </div>
+
+              {/* 3D Canvas */}
+              <TechStack3D />
+            </div>
           </div>
         </div>
       </div>

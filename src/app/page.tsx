@@ -7,6 +7,8 @@ import WorkTogether from "@/components/WorkTogether";
 import GitHubSync from "@/components/GitHubSync";
 import MetaBrain from "@/components/MetaBrain";
 import CTA from "@/components/CTA";
+import Testimonials from "@/components/Testimonials";
+import Projects from "@/components/Projects";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -18,7 +20,9 @@ export default function Home() {
         {/* <Productivity /> */}
         <About />
         {/* <Features /> */}
-        {/* <WorkTogether /> */}
+        <WorkTogether />
+        <Testimonials />
+        <Projects />
         {/* <GitHubSync /> */}
         {/* <MetaBrain /> */}
         {/* <CTA /> */}
