@@ -1,15 +1,41 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 import HeroCTA from "./HeroCTA";
 
-const ticker = [
-  "Data Management",
-  "Process Automation",
-  "Vision Machines",
-  "AI Solutions",
-  "Neural Networks",
-  "Analytics",
+const brands = [
+  "/img/brands/7olyNF6jt1pHqK4i1NueccN2nJo.avif",
+  "/img/brands/jY4sMQ7GRZcZ3BQUPxHlQlFWRo.avif",
+  "/img/brands/kZ1lMKnqVwI2vV7w1cZd8LAhF3A.avif",
+  "/img/brands/sLzH4rMcDu6Hw2kF6Or04Y9g9BM.png",
 ];
 
+// Duplicate brands to fill the viewport for seamless looping
+const marqueeItems = [...brands, ...brands, ...brands, ...brands];
+
 export default function Hero() {
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    // Measure the first half (one full set) of the track
+    const halfWidth = track.scrollWidth / 2;
+
+    const tween = gsap.to(track, {
+      x: -halfWidth,
+      duration: 20,
+      ease: "none",
+      repeat: -1,
+    });
+
+    return () => {
+      tween.kill();
+    };
+  }, []);
+
   return (
     <section className="hero relative h-[1700px] overflow-hidden pt-[184px] lg:h-[1300px] lg:pt-28 md:h-auto md:pt-24 sm:pt-[92px]">
       <div className="relative mx-auto pt-10 flex h-full max-w-[1344px] flex-col px-10 lg:px-10 md:px-6">
@@ -57,39 +83,22 @@ export default function Hero() {
           />
         </div>
 
-        {/* Bottom ticker */}
-        <div className="absolute bottom-[88px] z-30 overflow-hidden text-[14px] tracking-tight lg:bottom-14 md:bottom-12 md:text-[13px] sm:bottom-9 sm:left-5 sm:right-0 sm:text-[12px]">
-          <p className="mb-3.5 font-light leading-none text-white/60 md:mb-3">
-            Everything you need for intelligent business operations:
+        {/* Brands marquee */}
+        <div className="absolute bottom-[88px] left-0 right-0 z-30 overflow-hidden lg:bottom-14 md:bottom-12 sm:bottom-9">
+          <p className="mb-5 text-center text-[14px] font-light leading-none text-white/60 md:mb-4 md:text-[13px] sm:text-[12px]">
+            Trusted by industry leaders
           </p>
-          <div className="w-full sm:flex sm:overflow-hidden">
-            <ul className="flex shrink-0 font-semibold leading-snug text-white hero-ticker-scroll">
-              {ticker.map((item, i) => (
-                <li
-                  key={item}
-                  className={`relative shrink-0 ${
-                    i > 0
-                      ? "before:relative before:mx-2.5 before:inline-block before:aspect-square before:w-[3px] before:rounded-full before:bg-white/30 before:align-middle"
-                      : ""
-                  }`}
-                >
-                  {item}
-                </li>
+          <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+            <div ref={trackRef} className="flex w-max items-center gap-12 md:gap-10 sm:gap-8">
+              {marqueeItems.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt="Brand logo"
+                  className="h-8 w-auto shrink-0 object-contain opacity-60 brightness-0 invert transition-opacity hover:opacity-100 md:h-7 sm:h-6"
+                />
               ))}
-            </ul>
-            <ul
-              className="hidden shrink-0 font-semibold leading-snug text-white sm:flex hero-ticker-scroll"
-              aria-hidden
-            >
-              {ticker.map((item) => (
-                <li
-                  key={`dup-${item}`}
-                  className="relative shrink-0 before:relative before:mx-2.5 before:inline-block before:aspect-square before:w-[3px] before:rounded-full before:bg-white/30 before:align-middle"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
+            </div>
           </div>
         </div>
       </div>
