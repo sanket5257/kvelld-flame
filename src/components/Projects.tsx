@@ -27,7 +27,7 @@ export default function Projects() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#090a0c] py-24"
+      className="relative bg-dark-bg py-24 pb-40"
       style={{ cursor: "none" }}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}

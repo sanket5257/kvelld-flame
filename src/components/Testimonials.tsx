@@ -1,6 +1,10 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
@@ -49,11 +53,40 @@ export default function Testimonials() {
   const allCards = [...testimonials, ...testimonials];
   const trackRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const dragStart = useRef({ x: 0, scrollOffset: 0 });
   const currentOffset = useRef(0);
   const animationPaused = useRef(false);
+
+  // Scroll-triggered reveal animation
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        sectionRef.current,
+        {
+          scale: 0.92,
+          borderRadius: "60px 60px 0 0",
+        },
+        {
+          scale: 1,
+          borderRadius: "60px 60px 0 0",
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "top 20%",
+            scrub: 0.6,
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Move custom cursor to follow mouse
   const handleMouseMove = useCallback(
@@ -151,7 +184,15 @@ export default function Testimonials() {
         }}
       />
 
-      <section className="flex h-screen flex-col justify-center overflow-hidden bg-[#f8f9fb]">
+      <section
+        ref={sectionRef}
+        className="relative z-10 flex h-screen flex-col justify-center overflow-hidden bg-[#f8f9fb]"
+        style={{
+          marginTop: "-120px",
+          boxShadow: "0 -40px 80px rgba(0,0,0,0.3)",
+          transformOrigin: "center top",
+        }}
+      >
         {/* Header */}
         <div className="mx-auto max-w-[1344px] px-10 text-center md:px-6">
           <span className="font-mono text-sm tracking-widest text-black/40">
