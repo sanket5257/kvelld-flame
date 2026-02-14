@@ -1,11 +1,136 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
 export default function Approach() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>(".approach-card");
+
+      // Scroll reveal
+      gsap.set(cards, { opacity: 0, y: 60 });
+
+      cards.forEach((card, i) => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: i * 0.15,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+          },
+        });
+      });
+
+      // Awwwards-style hover: magnetic tilt + image parallax zoom + border glow
+      cards.forEach((card) => {
+        const img = card.querySelector("img");
+        const content = card.querySelector<HTMLElement>(".relative.z-10");
+
+        const handleEnter = () => {
+          gsap.to(card, {
+            scale: 1.02,
+            duration: 0.4,
+            ease: "power2.out",
+            boxShadow: "0 0 30px rgba(255,255,255,0.06), 0 0 60px rgba(99,102,241,0.08)",
+            borderColor: "rgba(255,255,255,0.15)",
+          });
+          if (img) {
+            gsap.to(img, { scale: 1.08, duration: 0.6, ease: "power2.out" });
+          }
+        };
+
+        const handleLeave = () => {
+          gsap.to(card, {
+            scale: 1,
+            rotateX: 0,
+            rotateY: 0,
+            duration: 0.5,
+            ease: "power3.out",
+            boxShadow: "0 0 0px rgba(255,255,255,0)",
+            borderColor: "",
+          });
+          if (img) {
+            gsap.to(img, {
+              scale: 1,
+              x: 0,
+              y: 0,
+              duration: 0.5,
+              ease: "power3.out",
+            });
+          }
+          if (content) {
+            gsap.to(content, { x: 0, y: 0, duration: 0.4, ease: "power3.out" });
+          }
+        };
+
+        const handleMove = (e: MouseEvent) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * -6;
+          const rotateY = ((x - centerX) / centerX) * 6;
+
+          gsap.to(card, {
+            rotateX,
+            rotateY,
+            duration: 0.3,
+            ease: "power2.out",
+            transformPerspective: 800,
+          });
+
+          // Parallax shift on image
+          if (img) {
+            gsap.to(img, {
+              x: ((x - centerX) / centerX) * -8,
+              y: ((y - centerY) / centerY) * -8,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+
+          // Subtle content float
+          if (content) {
+            gsap.to(content, {
+              x: ((x - centerX) / centerX) * 4,
+              y: ((y - centerY) / centerY) * 4,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          }
+        };
+
+        card.style.transformStyle = "preserve-3d";
+
+        card.addEventListener("mouseenter", handleEnter);
+        card.addEventListener("mouseleave", handleLeave);
+        card.addEventListener("mousemove", handleMove);
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="bg-dark-bg py-28 lg:py-20 md:py-16 sm:py-12">
+    <section ref={sectionRef} className="bg-dark-bg py-28 lg:py-20 md:py-16 sm:py-12">
       <div className="mx-auto max-w-[1344px] px-10 lg:px-10 md:px-6">
+          <h2 className="mb-16 font-display text-[64px] font-semibold tracking-tight text-white lg:mb-12 lg:text-[52px] md:mb-10 md:text-[40px] max-sm:mb-8 max-sm:text-[28px]">
+            Our Approach
+          </h2>
         {/* Bento Layout — 2 columns on desktop, stacked on mobile */}
         <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
           {/* Left — Card 01 */}
-          <div className="relative min-h-[780px] flex-[1.1] overflow-hidden rounded-2xl border border-dark-border bg-dark-card lg:min-h-[660px] max-sm:min-h-[400px]">
+          <div className="approach-card relative min-h-[780px] flex-[1.1] overflow-hidden rounded-2xl border border-dark-border bg-dark-card lg:min-h-[660px] max-sm:min-h-[400px]">
             <img
               src="/img/brands/group-40165_1.webp"
               alt=""
@@ -32,7 +157,7 @@ export default function Approach() {
           {/* Right — Cards 02, 03, 04 */}
           <div className="flex flex-1 flex-col gap-5 max-sm:gap-4">
             {/* Card 02 — top right */}
-            <div className="relative flex-[1.6] overflow-hidden rounded-2xl border border-dark-border bg-dark-card max-sm:min-h-[320px]">
+            <div className="approach-card relative flex-[1.6] overflow-hidden rounded-2xl border border-dark-border bg-dark-card max-sm:min-h-[320px]">
               <img
                 src="/img/brands/frame-40166.webp"
                 alt=""
@@ -52,7 +177,7 @@ export default function Approach() {
             {/* Bottom row — Cards 03 & 04 */}
             <div className="flex flex-1 gap-5 max-sm:flex-col max-sm:gap-4">
               {/* Card 03 */}
-              <div className="relative flex-1 overflow-hidden rounded-2xl border border-dark-border bg-dark-card max-sm:min-h-[300px]">
+              <div className="approach-card relative flex-1 overflow-hidden rounded-2xl border border-dark-border bg-dark-card max-sm:min-h-[300px]">
                 <img
                   src="/img/brands/frame-40164.webp"
                   alt=""
@@ -70,7 +195,7 @@ export default function Approach() {
               </div>
 
               {/* Card 04 */}
-              <div className="relative flex-1 overflow-hidden rounded-2xl border border-dark-border bg-dark-card max-sm:min-h-[300px]">
+              <div className="approach-card relative flex-1 overflow-hidden rounded-2xl border border-dark-border bg-dark-card max-sm:min-h-[300px]">
                 <img
                   src="/img/brands/image-619.webp"
                   alt=""
